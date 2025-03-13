@@ -28,7 +28,7 @@ export const LoginForm = () => {
   const onSubmit: SubmitHandler<FieldValues> = async(data) => {
     try {
       const res = await loginUser(data)
-      console.log(res, "server action user")
+      // console.log(res, "server action user")
   
     if(res?.success){
       toast.success(res?.message)
