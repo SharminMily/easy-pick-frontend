@@ -4,6 +4,14 @@ import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 import { FieldValues } from "react-hook-form"
 
+
+interface ReCaptchaResponse {
+   success: boolean;
+   challenge_ts?: string;
+   hostname?: string;
+   "error-codes"?: string[];
+ }
+
 export const registerUser = async (userData: FieldValues) => {
    try {
     const res = await fetch (`${process.env.NEXT_PUBLIC_BASE_API}/user`,{
@@ -57,5 +65,25 @@ export const getCurrentUser = async () => {
   } else {
    return null
   }
+}
 
+
+export const reCaptchaTokenVerificatiom = async(token: string): Promise<ReCaptchaResponse> => {
+   try {
+      const res = await fetch("https://www.google.com/recaptcha/api/siteverify",{
+         method: "POST",
+         headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+         body: new URLSearchParams({
+            secret: process.env.NEXT_PUBLIC_RECAPTCHA_SERVER_KEY!,
+            response: token,
+         },)
+      })
+      return await res.json();
+   }
+    catch (error : any) {
+      console.error("ReCaptcha verification error:", error);
+      return { success: false }; // Return default response
+   }
 }

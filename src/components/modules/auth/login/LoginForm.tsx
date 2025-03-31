@@ -1,5 +1,5 @@
 "use client"
-
+import ReCAPTCHA from "react-google-recaptcha";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,22 +13,38 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { loginUser } from "@/services/AuthServices";
+import { loginUser, reCaptchaTokenVerificatiom } from "@/services/AuthServices";
 import { toast } from "sonner";
 import { loginSchema } from "./loginValidations";
+import { useState } from "react";
 
 export const LoginForm = () => {
   const form = useForm({
     resolver: zodResolver(loginSchema),
   });
 
+  const [reCaptchaStatus, setReCaptchaStatus] = useState(false)
+
   const {formState: {isSubmitted}, } = form
    // console.log(password,passwordConfirm )
+
+   const handleReCaptcha = async(value: string | null) => {
+    console.log(value)
+    try {
+      const res = await reCaptchaTokenVerificatiom(value!);
+          if(res?.success){
+            setReCaptchaStatus(true)
+          }
+
+    } catch (error: any) {
+      console.log(error)
+    }
+   }
 
   const onSubmit: SubmitHandler<FieldValues> = async(data) => {
     try {
       const res = await loginUser(data)
-      // console.log(res, "server action user")
+      console.log(res, "server action user")
   
     if(res?.success){
       toast.success(res?.message)
@@ -81,8 +97,17 @@ export const LoginForm = () => {
           )}
         />
       
+      <div className="flex mt-3  w-full">
+      <ReCAPTCHA
+    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_CLIENT_KEY as string}
+    onChange={handleReCaptcha}
+    className="mx-auto"
+  />
+      </div>
+
         <Button 
-       onSubmit={onSubmit}
+        disabled={reCaptchaStatus? false : true}
+        type="submit" 
         className="bg-fuchsia-600 text-white hover:bg-fuchsia-800 w-full mt-3"
         >
           {isSubmitted? "logging....": "login"}
