@@ -51,8 +51,8 @@ export default function Navbar() {
             <>
               <Link href="/create-shop">
                 <Button
-                  variant="outline"
-                  className="rounded-full hover:bg-gray-300  "
+               
+                  className="rounded-full bg-fuchsia-600 text-white hover:bg-gray-600  "
                 >
                   Create Shop
                 </Button>
