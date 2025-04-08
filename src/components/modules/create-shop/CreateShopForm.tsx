@@ -49,6 +49,7 @@ export default function CreateShopForm() {
       } catch (err: any) {
         console.error(err);
       }
+      //
     };
   
     return (
