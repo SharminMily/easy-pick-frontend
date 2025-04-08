@@ -41,7 +41,7 @@ export default function CreateShopForm() {
   
         const res = await createShop(formData);
   
-        console.log(res);
+       // console.log(res);
   
         if (res.success) {
           toast.success(res.message);
